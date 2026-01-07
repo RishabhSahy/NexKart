@@ -1,4 +1,4 @@
-﻿/* =========================================================
+/* =========================================================
    DATABASE
 ========================================================= */
 CREATE DATABASE NexCartDB;
@@ -26,7 +26,6 @@ GO
 CREATE TABLE auth.Roles (
     RoleId INT IDENTITY PRIMARY KEY,
     RoleName NVARCHAR(50) NOT NULL UNIQUE,
-
     IsActive BIT NOT NULL DEFAULT 1,
     CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),
     ModifiedDate DATETIME NULL
@@ -38,11 +37,9 @@ CREATE TABLE auth.Users (
     Email NVARCHAR(100) NOT NULL UNIQUE,
     PasswordHash NVARCHAR(256) NOT NULL,
     RoleId INT NOT NULL,
-
     IsActive BIT NOT NULL DEFAULT 1,
     CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),
     ModifiedDate DATETIME NULL,
-
     CONSTRAINT FK_Users_Roles 
         FOREIGN KEY (RoleId) REFERENCES auth.Roles(RoleId)
 );
@@ -53,7 +50,6 @@ CREATE TABLE auth.Users (
 CREATE TABLE catalog.Categories (
     CategoryId INT IDENTITY PRIMARY KEY,
     CategoryName NVARCHAR(100) NOT NULL UNIQUE,
-
     IsActive BIT NOT NULL DEFAULT 1,
     CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),
     ModifiedDate DATETIME NULL
@@ -67,11 +63,9 @@ CREATE TABLE catalog.Products (
     Quantity INT NOT NULL DEFAULT 0,
     CategoryId INT NOT NULL,
     ExpirationDate DATETIME NULL,
-
     IsActive BIT NOT NULL DEFAULT 1,
     CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),
     ModifiedDate DATETIME NULL,
-
     CONSTRAINT FK_Products_Categories 
         FOREIGN KEY (CategoryId) REFERENCES catalog.Categories(CategoryId)
 );
@@ -82,11 +76,9 @@ CREATE TABLE catalog.Products (
 CREATE TABLE cart.Cart (
     CartId INT IDENTITY PRIMARY KEY,
     UserId INT NOT NULL,
-
     IsActive BIT NOT NULL DEFAULT 1,
     CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),
     ModifiedDate DATETIME NULL,
-
     CONSTRAINT FK_Cart_Users 
         FOREIGN KEY (UserId) REFERENCES auth.Users(UserId)
 );
@@ -96,14 +88,11 @@ CREATE TABLE cart.CartItems (
     CartId INT NOT NULL,
     ProductId INT NOT NULL,
     Quantity INT NOT NULL DEFAULT 1,
-
     IsActive BIT NOT NULL DEFAULT 1,
     CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),
     ModifiedDate DATETIME NULL,
-
     CONSTRAINT FK_CartItems_Cart 
         FOREIGN KEY (CartId) REFERENCES cart.Cart(CartId),
-
     CONSTRAINT FK_CartItems_Products 
         FOREIGN KEY (ProductId) REFERENCES catalog.Products(ProductId)
 );
@@ -114,7 +103,6 @@ CREATE TABLE cart.CartItems (
 CREATE TABLE [order].OrderStatusMaster (
     OrderStatusId INT IDENTITY PRIMARY KEY,
     StatusName NVARCHAR(50) NOT NULL UNIQUE,
-
     IsActive BIT NOT NULL DEFAULT 1,
     CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),
     ModifiedDate DATETIME NULL
@@ -134,14 +122,11 @@ CREATE TABLE [order].Orders (
     UserId INT NOT NULL,
     TotalAmount DECIMAL(18,2) NOT NULL,
     OrderStatusId INT NOT NULL,
-
     IsActive BIT NOT NULL DEFAULT 1,
     CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),
     ModifiedDate DATETIME NULL,
-
     CONSTRAINT FK_Orders_Users 
         FOREIGN KEY (UserId) REFERENCES auth.Users(UserId),
-
     CONSTRAINT FK_Orders_OrderStatus 
         FOREIGN KEY (OrderStatusId) REFERENCES [order].OrderStatusMaster(OrderStatusId)
 );
@@ -152,14 +137,11 @@ CREATE TABLE [order].OrderItems (
     ProductId INT NOT NULL,
     Quantity INT NOT NULL,
     Price DECIMAL(18,2) NOT NULL,
-
     IsActive BIT NOT NULL DEFAULT 1,
     CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),
     ModifiedDate DATETIME NULL,
-
     CONSTRAINT FK_OrderItems_Orders 
         FOREIGN KEY (OrderId) REFERENCES [order].Orders(OrderId),
-
     CONSTRAINT FK_OrderItems_Products 
         FOREIGN KEY (ProductId) REFERENCES catalog.Products(ProductId)
 );
@@ -170,14 +152,13 @@ CREATE TABLE [order].OrderItems (
 CREATE TABLE payment.PaymentMethods (
     PaymentMethodId INT IDENTITY PRIMARY KEY,
     MethodName NVARCHAR(50) NOT NULL UNIQUE,
-
     IsActive BIT NOT NULL DEFAULT 1,
     CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),
     ModifiedDate DATETIME NULL
 );
 
 INSERT INTO payment.PaymentMethods (MethodName)
-VALUES ('COD'),('Card'),('Wallet'),('UPI');
+VALUES ('COD'), ('Card'), ('Wallet'), ('UPI');
 
 CREATE TABLE payment.Payments (
     PaymentId INT IDENTITY PRIMARY KEY,
@@ -185,14 +166,11 @@ CREATE TABLE payment.Payments (
     PaymentMethodId INT NOT NULL,
     PaymentStatus NVARCHAR(50) NOT NULL DEFAULT 'Pending',
     PaidDate DATETIME NULL,
-
     IsActive BIT NOT NULL DEFAULT 1,
     CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),
     ModifiedDate DATETIME NULL,
-
     CONSTRAINT FK_Payments_Orders 
         FOREIGN KEY (OrderId) REFERENCES [order].Orders(OrderId),
-
     CONSTRAINT FK_Payments_PaymentMethods 
         FOREIGN KEY (PaymentMethodId) REFERENCES payment.PaymentMethods(PaymentMethodId)
 );
